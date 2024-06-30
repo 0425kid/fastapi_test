@@ -74,8 +74,3 @@ def read_root():
 @app.get("/items/{item_id}")
 def read_item(item_id: int, q: str = None):
     return {"item_id": item_id, "q": q}
-
-@app.get("/users")
-def read_users(db: Session = Depends(get_db)):
-    users = db.query(User).all()
-    return users
