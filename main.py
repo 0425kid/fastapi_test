@@ -1,6 +1,7 @@
 # 파일명: main.py
 from fastapi import FastAPI
 
+print('fastapi running')
 app = FastAPI()
 
 @app.get("/")
