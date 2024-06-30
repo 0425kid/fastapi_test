@@ -1,40 +1,71 @@
-# main.py
-from fastapi import FastAPI, Depends
-from sqlalchemy import create_engine, Column, Integer, String, TIMESTAMP, MetaData
+from fastapi import FastAPI, HTTPException, status
+from pydantic import BaseModel
+from sqlalchemy import Column, Integer, String, Text, Boolean, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
-from datetime import datetime
-import os
 
-DATABASE_URL = os.getenv('DATABASE_URL', 'postgresql://myuser:password@localhost/mydatabase')
+# PostgreSQL database URL (replace with your actual database URL)
+DATABASE_URL = "postgresql://myuser:password@localhost/mydatabase"
 
-# 데이터베이스 연결 설정
+# SQLAlchemy database engine
 engine = create_engine(DATABASE_URL)
+
+# SQLAlchemy session
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+# Base class for SQLAlchemy models
 Base = declarative_base()
 
-# users 테이블 정의
-class User(Base):
-    __tablename__ = 'users'
+# Caregiver model
+class Caregiver(Base):
+    __tablename__ = "caregivers"
+
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, index=True)
-    email = Column(String, unique=True, index=True)
-    age = Column(Integer)
-    created_at = Column(TIMESTAMP, default=datetime.utcnow)
+    name = Column(String, nullable=False)
+    age = Column(Integer, nullable=False)
+    gender = Column(String)
+    phone_number = Column(String, nullable=False)
+    address = Column(String, nullable=False)
+    career = Column(Text)
+    desired_hourly_rate = Column(Integer, nullable=False)
 
-# 데이터베이스 초기화
-Base.metadata.create_all(bind=engine)
+# Pydantic model for caregiver registration
+class CaregiverCreate(BaseModel):
+    name: str
+    age: int
+    gender: str
+    phone_number: str
+    address: str
+    career: str
+    desired_hourly_rate: int
 
-# FastAPI 앱 생성
 app = FastAPI()
 
-# Dependency
+# Dependency to get the database session
 def get_db():
     db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
+
+# Create caregiver API endpoint
+@app.post("/caregivers/", response_model=Caregiver)
+def create_caregiver(caregiver: CaregiverCreate, db: Session = Depends(get_db)):
+    db_caregiver = Caregiver(
+        name=caregiver.name,
+        age=caregiver.age,
+        gender=caregiver.gender,
+        phone_number=caregiver.phone_number,
+        address=caregiver.address,
+        career=caregiver.career,
+        desired_hourly_rate=caregiver.desired_hourly_rate,
+    )
+    db.add(db_caregiver)
+    db.commit()
+    db.refresh(db_caregiver)
+    return db_caregiver
+
 
 @app.get("/")
 def read_root():
