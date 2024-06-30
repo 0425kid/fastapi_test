@@ -1,6 +1,6 @@
-from fastapi import FastAPI, HTTPException, status, Depends
+from fastapi import FastAPI, Depends, HTTPException
 from pydantic import BaseModel
-from sqlalchemy import Column, Integer, String, Text, Boolean, create_engine
+from sqlalchemy import Column, Integer, String, Text, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
 
@@ -23,7 +23,7 @@ class Caregiver(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
     age = Column(Integer, nullable=False)
-    gender = Column(String)
+    gender = Column(String, nullable=False)
     phone_number = Column(String, nullable=False)
     address = Column(String, nullable=False)
     career = Column(Text)
@@ -65,12 +65,3 @@ def create_caregiver(caregiver: CaregiverCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(db_caregiver)
     return db_caregiver
-
-
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
-
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: str = None):
-    return {"item_id": item_id, "q": q}
