@@ -6,9 +6,7 @@ from sqlalchemy.orm import sessionmaker, Session
 from datetime import datetime
 import os
 
-#DATABASE_URL = os.getenv('DATABASE_URL', 'postgresql://myuser:password@localhost/mydatabase')
-DATABASE_URL = 'postgresql://postgres:passwordd@localhost/mydatabase'
-
+DATABASE_URL = os.getenv('DATABASE_URL', 'postgresql://myuser:password@localhost/mydatabase')
 
 # 데이터베이스 연결 설정
 engine = create_engine(DATABASE_URL)
