@@ -21,16 +21,19 @@ Base = declarative_base()
 
 # 요양사 클래스
 class Caregiver(Base):
+    # 테이블 이름
     __tablename__ = "caregivers"
 
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, nullable=False)
-    age = Column(Integer, nullable=False)
-    gender = Column(String, nullable=False)
-    phone_number = Column(String, nullable=False)
-    address = Column(String, nullable=False)
-    career = Column(Text)
-    desired_hourly_rate = Column(Integer, nullable=False)
+    # 각 컬럼은 테이블의 열을 나타냄
+    # 열의 데이터 타입과 제약조건 정의
+    id = Column(Integer, primary_key=True, index=True) #index
+    name = Column(String, nullable=False) #이름
+    age = Column(Integer, nullable=False) #나이
+    gender = Column(String, nullable=False) #성별
+    phone_number = Column(String, nullable=False) #전화번호
+    address = Column(String, nullable=False) #주소
+    career = Column(Text) #경력
+    desired_hourly_rate = Column(Integer, nullable=False) #희망 시급
 
 # Pydantic model for caregiver registration
 class CaregiverCreate(BaseModel):
