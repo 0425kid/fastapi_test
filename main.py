@@ -39,6 +39,20 @@ class CaregiverCreate(BaseModel):
     career: str
     desired_hourly_rate: int
 
+# Pydantic model for caregiver response
+class CaregiverResponse(BaseModel):
+    id: int
+    name: str
+    age: int
+    gender: str
+    phone_number: str
+    address: str
+    career: str
+    desired_hourly_rate: int
+
+    class Config:
+        orm_mode = True
+
 app = FastAPI()
 
 # Dependency to get the database session
@@ -50,7 +64,7 @@ def get_db():
         db.close()
 
 # Create caregiver API endpoint
-@app.post("/caregivers/", response_model=Caregiver)
+@app.post("/caregivers/", response_model=CaregiverResponse)
 def create_caregiver(caregiver: CaregiverCreate, db: Session = Depends(get_db)):
     db_caregiver = Caregiver(
         name=caregiver.name,
