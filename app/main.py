@@ -1,5 +1,6 @@
 from fastapi import FastAPI
-from .routers import caregiver, patient, message
+from .routers import caregiver
+# from .routers import caregiver, patient, message
 
 app = FastAPI()
 
