@@ -1,6 +1,5 @@
 from fastapi import FastAPI
-from .routers import caregiver
-# from .routers import caregiver, patient, message
+from app.routers import caregiver, patient, message  # 절대 경로 사용
 
 app = FastAPI()
 
