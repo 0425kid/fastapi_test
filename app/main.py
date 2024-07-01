@@ -1,22 +1,25 @@
+# FastAPI : fastAPI 프레임 워크
+# Depends : 종속성 주입용
+# HTTPException : 예외 처리
 from fastapi import FastAPI, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy import Column, Integer, String, Text, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
 
-# PostgreSQL database URL (replace with your actual database URL)
+# PostgreSQL database 연결 url
 DATABASE_URL = "postgresql://myuser:password@localhost/mydatabase"
 
-# SQLAlchemy database engine
+# SQLAlchemy database 엔진 생성
 engine = create_engine(DATABASE_URL)
 
-# SQLAlchemy session
+# SQLAlchemy session 생성기
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# Base class for SQLAlchemy models
+# 모든 SQLAlchemy models에 대한 base class
 Base = declarative_base()
 
-# Caregiver model
+# 요양사 클래스
 class Caregiver(Base):
     __tablename__ = "caregivers"
 
@@ -79,3 +82,4 @@ def create_caregiver(caregiver: CaregiverCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(db_caregiver)
     return db_caregiver
+
