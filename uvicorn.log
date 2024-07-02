@@ -1,0 +1,11 @@
+INFO:     Will watch for changes in these directories: ['/home/ubuntu/fastapi_test']
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [39418] using WatchFiles
+/home/ubuntu/.local/lib/python3.10/site-packages/pydantic/_internal/_config.py:334: UserWarning: Valid config keys have changed in V2:
+* 'orm_mode' has been renamed to 'from_attributes'
+  warnings.warn(message, UserWarning)
+INFO:     Started server process [39423]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     210.111.180.117:53376 - "GET /docs HTTP/1.1" 200 OK
+INFO:     210.111.180.117:53376 - "GET /openapi.json HTTP/1.1" 200 OK
