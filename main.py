@@ -1,61 +1,25 @@
-# 각종 import
-# Depends : 종속성 주입
-# HTTPException : 예외처리
-from fastapi import FastAPI, Depends, HTTPException
-from sqlalchemy.orm import Session
-from database import SessionLocal, engine
-from models import Caregiver, Base
-from schemas import CaregiverCreate, CaregiverResponse
+# main.py
+
+from fastapi import FastAPI
+from routers.debug import router as debug_router
+from routers.account import router as account_router
+from routers.caregiver import router as caregiver_router
+from routers.guardian import router as guardian_router
+from routers.profile import router as profile_router
+from routers.message import router as message_router
+from routers.caregiving import router as caregiving_router
+
+
 
 app = FastAPI()
 
-# Dependency to get the database session
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+app.include_router(profile_router, prefix="/profile", tags=["profile"])
+app.include_router(account_router, prefix="/account", tags=["account"])
 
-# 신규 요양사 회원가입
-@app.post("/caregivers/", response_model=CaregiverResponse)
-def create_caregiver(caregiver: CaregiverCreate, db: Session = Depends(get_db)):
-    db_caregiver = Caregiver(
-        name=caregiver.name,
-        age=caregiver.age,
-        gender=caregiver.gender,
-        phone=caregiver.phone,
-        address=caregiver.address,
-        experience=caregiver.experience,
-        desired_hourly_rate=caregiver.desired_hourly_rate,
-    )
-    db.add(db_caregiver)
-    db.commit()
-    db.refresh(db_caregiver)
-    return db_caregiver
+app.include_router(caregiver_router, prefix="/caregivers", tags=["caregivers"])
+app.include_router(guardian_router, prefix="/guardians", tags=["guardians"])
 
-# 모든 요양사 정보 불러오기
-@app.get("/caregivers/", response_model=list[CaregiverResponse])
-def get_all_caregivers(db: Session = Depends(get_db)):
-    caregivers = db.query(Caregiver).all()
-    return caregivers
+app.include_router(message_router, prefix="/message", tags=["message"])
+app.include_router(caregiving_router, prefix="/caregiving", tags=["caregiving"])
 
-# Get a caregiver by index
-@app.get("/caregivers/{caregiver_id}", response_model=CaregiverResponse)
-def get_caregiver(caregiver_id: int, db: Session = Depends(get_db)):
-    caregiver = db.query(Caregiver).filter(Caregiver.id == caregiver_id).first()
-    if caregiver is None:
-        raise HTTPException(status_code=404, detail="Caregiver not found")
-    return caregiver
-
-
-# 모든 요양사 삭제 및 테이블 초기화
-@app.delete("/caregivers/reset/")
-def delete_all_caregivers(db: Session = Depends(get_db)):
-    try:
-        db.query(Caregiver).delete()
-        db.commit()
-        return {"message": "All caregivers deleted successfully"}
-    except Exception as e:
-        db.rollback()
-        raise HTTPException(status_code=500, detail=f"Failed to delete caregivers: {str(e)}")
+app.include_router(debug_router, prefix="/debug", tags=["debug"])
